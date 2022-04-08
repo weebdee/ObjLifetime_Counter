@@ -1,74 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { bindActionCreators } from "redux";
+import store from "./store";
+import {inc, dec, rnd} from "./actions";
 
-class Counter extends React.Component {
-  state = {count: 0}
+const {increment, decrement, random } = bindActionCreators(
+  {
+    increment: inc,
+    decrement: dec,
+    random: rnd,
+  },
+  store.dispatch
+)
 
-  onIncrement = () => {
-    this.setState(oldState => ({count: oldState.count + 1}))
-    // this.setState({count: 73})
-  }
+const counterDisplay = document.getElementById('conter-display'),
+      incrementBtn = document.getElementById('increment'),
+      decrementBtn = document.getElementById('decrement'),
+      randomBtn = document.getElementById('random');
 
-  UNSAFE_componentWillMount = () => {
-    console.log('Before mounting in Browser');
-  }
+incrementBtn.addEventListener('click', increment)
+decrementBtn.addEventListener('click', decrement)
+randomBtn.addEventListener('click', random)
 
-  componentDidMount = () => {
-    console.log('After mounting in Browser');
-  }
-
-  UNSAFE_componentWillUpdate = () => {
-    console.log('Before mounting an updated component in Browser');
-  }
-
-  componentDidUpdate = () => {
-    console.log('After mounting an updated component in Browser');
-  }
-
-  componentWillUnmount = () => {
-    console.log('Before deleting the component');
-  }
-
-  shouldComponentUpdate = (newProps, newState) => {
-    if (newState.count !== this.state.count) {
-      return true
-    } else { 
-      return false
-    }
-  }
-
-  render() {
-    console.log('Mount');
-    return (
-      <div>
-        <p>{this.state.count}</p>
-        <input type='button' value='increment' onClick={this.onIncrement}></input>
-      </div>
-    )
-  }
-}
-
-class App extends React.Component {
-  state = {showCounter: true}
-
-  onToggleCounter = () => {
-    this.setState(oldState => ({showCounter: !oldState.showCounter}))
-  }
-
-  render() {
-    const counter = this.state.showCounter? <Counter /> : null;
-
-    return (
-      <div>
-        {counter}
-        <input type='button' value='Toggle counter' onClick={this.onToggleCounter}></input>
-      </div>
-    )
-  }
-}
- 
-
-ReactDOM.render(
-    <App />,
-  document.getElementById('root')
-);
+store.subscribe(() => {
+  counterDisplay.value = store.getState()
+})
